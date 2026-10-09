@@ -35,12 +35,18 @@ Parameters:
     Description: "Enter your Subnet ID"
     Default: "subnet-08c44f4adae36b232"
 
+  KeyPair:
+    Type: String
+    Description: "Enter your Key Pair"
+    Default: "dnag-kp"
+
 Resources:
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: !Ref InstanceType
       ImageId: !Ref AMIId
+      KeyName: !Ref KeyPair
       SubnetId: !Ref SubnetID
       SecurityGroupIds:
         - !Ref InstanceSecurityGroup  
