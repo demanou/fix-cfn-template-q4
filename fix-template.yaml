@@ -14,16 +14,26 @@ Parameters:
 
   InstanceType:
     Type: String
-    Default: t2.micro
+    Default: t3.micro
     AllowedValues:
-      - t2.micro
-      - t2.small
+      - t3.micro
+      - t3.small
     Description: EC2 instance type.
 
   AMIId:
-    Type: AWS::EC2::Image::Id
-    Default: ami-03814457ed908d8f6
+    Type: String
+    Default: ami-0bf6dbeae330f5823
     Description: The AMI ID to use.
+
+  VpcID:
+    Description: "Enter your VPC ID"
+    Default: "vpc-03aa2d44aeeee4e02"
+    Type: String
+
+  SubnetID:
+    Type: String
+    Description: "Enter your Subnet ID"
+    Default: "subnet-08c44f4adae36b232"
 
 Resources:
   EC2Instance:
@@ -31,6 +41,9 @@ Resources:
     Properties:
       InstanceType: !Ref InstanceType
       ImageId: !Ref AMIId
+      SubnetId: !Ref SubnetID
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup  
       Tags:
         - Key: Name
           Value: !Sub "${EnvironmentName}-instance"
@@ -39,7 +52,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow SSH access
-      VpcId: vpc-0d5d4b0f4e6f895ad
+      VpcId: !Ref VpcID
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -50,3 +63,7 @@ Outputs:
   InstanceId:
     Description: The ID of the EC2 instance
     Value: !Ref EC2Instance
+
+  InstancePublicIp:
+    Description: Public IP address of the EC2 instance
+    Value: !GetAtt EC2Instance.PublicIp
